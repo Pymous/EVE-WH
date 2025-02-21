@@ -20,6 +20,7 @@
         "vue": "^3.4.0"
     },
     "dependencies": {
-        "javascript-lp-solver": "^0.4.24"
+        "javascript-lp-solver": "^0.4.24",
+        "vue3-toastify": "^0.2.8"
     }
 }
