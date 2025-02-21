@@ -17,6 +17,13 @@ const material_efficiency = ref(0);
 const listShopping = ref(null);
 const listPrices = ref({});
 
+// Some refs
+const inputSearch = ref(null);
+const inputStock = ref(null);
+const inputRuns = ref(null);
+const inputMaterialEfficiency = ref(null);
+const inputEfficiency = ref(null);
+
 // Using axios, fetch the item from the database based on the search, call /search with a query parameter of search
 const fetchItem = async () => {
     loading.value = true;
@@ -163,16 +170,37 @@ watch(currentStockInput, (value) => {
     <div
         class="page-welcome max-w-5xl mx-auto flex flex-col items-center justify-center"
     >
+        <div class="mt-12 flex gap-5 items-center flew-grow w-full">
+            <div>
+                <img src="../../img/logo.png" class="w-24" />
+            </div>
+            <div>
+                <h1 class="leading-none">EVE-WH</h1>
+                <h2 class="leading-none uppercase">
+                    A Companion App for WH Logistics
+                </h2>
+            </div>
+        </div>
+
         <div class="mt-12">
-            <h1>EWH - BP to Compressed Ores Calculator</h1>
+            <h2>BP to Compressed Ores Calculator</h2>
             <p>
                 This tool will help you calculate the compressed ores you need
                 to build a blueprint.
             </p>
             <p>
-                To use it, simply search for the blueprint you want to build,
-                set the number of Runs, Material Efficiency and Reprocessing
-                Efficiency, and start the process.
+                To use it, simply search for the
+                <a @mouseenter="inputSearch.focus()">Item</a> you want to build,
+                set the number of <a @mouseenter="inputRuns.focus()">Runs</a>,
+                <a @mouseenter="inputMaterialEfficiency.focus()">
+                    Material Efficiency
+                </a>
+                and
+                <a @mouseenter="inputEfficiency.focus()">
+                    Reprocessing Efficiency </a
+                >, you can also copy/paste a
+                <a @mouseenter="inputStock.focus()">Stock</a> content and start
+                the process.
             </p>
         </div>
         <div class="flex flex-col items-center justify-center mt-12">
@@ -186,6 +214,7 @@ watch(currentStockInput, (value) => {
                                 type="text"
                                 placeholder="Search for an Item"
                                 @keyup.enter="fetchItem"
+                                ref="inputSearch"
                             />
                             <button @click="fetchItem">
                                 <i class="fa fa-search"></i>
@@ -198,6 +227,7 @@ watch(currentStockInput, (value) => {
                             <textarea
                                 v-model="currentStockInput"
                                 placeholder="Copy/Paste your stock to take it into account"
+                                ref="inputStock"
                             />
                         </div>
                     </label>
@@ -210,6 +240,7 @@ watch(currentStockInput, (value) => {
                                 v-model="runs"
                                 type="number"
                                 placeholder="How many ?"
+                                ref="inputRuns"
                             />
                         </div>
                     </label>
@@ -223,6 +254,7 @@ watch(currentStockInput, (value) => {
                                 type="text"
                                 placeholder="Material Efficiency (in %)"
                                 max="10"
+                                ref="inputMaterialEfficiency"
                             />
                             <div
                                 class="absolute left-0 top-0 h-full bg-white bg-opacity-5 pointer-events-none transition-all ease-linear"
@@ -243,6 +275,7 @@ watch(currentStockInput, (value) => {
                                 v-model="efficiency"
                                 type="text"
                                 placeholder="Efficiency (in %)"
+                                ref="inputEfficiency"
                             />
                             <div
                                 class="absolute left-0 top-0 h-full bg-white bg-opacity-5 pointer-events-none transition-all ease-linear"
@@ -271,9 +304,9 @@ watch(currentStockInput, (value) => {
             <!-- ITEM -->
             <div class="flex gap-12" v-if="item">
                 <div class="flex flex-col">
-                    <h1 class="text-sm uppercase font-bold">
+                    <h2 class="text-sm uppercase font-bold">
                         {{ item.item.name }}
-                    </h1>
+                    </h2>
                     <img
                         :src="`https://images.evetech.net/types/${item.item.id}/icon`"
                         class="eve-box p-2"
@@ -298,7 +331,7 @@ watch(currentStockInput, (value) => {
                     class="flex flex-col eve-box p-5"
                     v-if="listShopping && Object.keys(listShopping).length"
                 >
-                    <h1 class="text-sm uppercase font-bold">List of Ores</h1>
+                    <h2 class="text-sm uppercase font-bold">List of Ores</h2>
                     <div class="flex gap-5">
                         <table>
                             <tr v-for="(quantity, ore) in listShopping">
