@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('items_activity_products', function (Blueprint $table) {
+        Schema::create('items_activity_materials', function (Blueprint $table) {
             $table->integer('item_id');
             $table->integer('activity')->nullable();
             $table->integer('material_id')->nullable();
