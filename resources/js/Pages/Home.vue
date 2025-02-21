@@ -2,6 +2,7 @@
 import solver from "javascript-lp-solver";
 import { Head, Link } from "@inertiajs/vue3";
 import { ref, computed, watch } from "vue";
+import { toast } from "vue3-toastify";
 
 defineProps({});
 const loading = ref(false);
@@ -19,14 +20,31 @@ const listPrices = ref({});
 // Using axios, fetch the item from the database based on the search, call /search with a query parameter of search
 const fetchItem = async () => {
     loading.value = true;
-    const response = await axios.get("/api/item/search", {
-        params: {
-            search: search.value,
-        },
-    });
-
-    item.value = response.data;
-    loading.value = false;
+    await axios
+        .get("/api/item/search", {
+            params: {
+                search: search.value,
+            },
+        })
+        .then((response) => {
+            item.value = response.data;
+        })
+        .catch((error) => {
+            switch (error.response.status) {
+                case 422:
+                    toast.error("Please provide a valid search");
+                    break;
+                case 404:
+                    toast.error("No item found with this search");
+                    break;
+                default:
+                    toast.error("An error occured");
+                    break;
+            }
+        })
+        .finally(() => {
+            loading.value = false;
+        });
 };
 
 const solve = async () => {
@@ -85,7 +103,7 @@ const manufactureMaterials = computed(() => {
             efficiency: {},
         };
         for (const material of item.value.bp.manufacture_materials) {
-            let tempQuantity = material.pivot.quantity;
+            let tempQuantity = material.pivot.quantity * runs.value; // Apply the number of runs we want to make
 
             // Check if the current material.name is in currentStockList, and if yes, subtract the quantity available to the quantity needed
             if (currentStockList.value[material.name]) {
@@ -97,12 +115,12 @@ const manufactureMaterials = computed(() => {
             materials["base"][material.name] = {
                 min: material.pivot.quantity * runs.value,
             };
+
             materials["efficiency"][material.name] = {
                 min:
                     tempQuantity *
                     calculatedMaterialEfficiency * // Apply ME
-                    calculatedEfficiency * // Apply Reprocessing Efficiency
-                    runs.value, // Apply the number of runs
+                    calculatedEfficiency, // Apply Reprocessing Efficiency
             };
         }
         return materials;
@@ -153,8 +171,8 @@ watch(currentStockInput, (value) => {
             </p>
             <p>
                 To use it, simply search for the blueprint you want to build,
-                set the Material Efficiency and Reprocessing Efficiency, and
-                start the process.
+                set the number of Runs, Material Efficiency and Reprocessing
+                Efficiency, and start the process.
             </p>
         </div>
         <div class="flex flex-col items-center justify-center mt-12">
@@ -219,7 +237,7 @@ watch(currentStockInput, (value) => {
                         </div>
                     </label>
                     <label>
-                        <span>Efficiency</span>
+                        <span>Reprocessing Efficiency</span>
                         <div class="inline-flex relative">
                             <input
                                 v-model="efficiency"
@@ -290,12 +308,22 @@ watch(currentStockInput, (value) => {
                         </table>
                         <table class="text-right">
                             <tr v-for="(quantity, ore) in listShopping">
-                                <td>{{ getPrice(ore, quantity) }} ISK</td>
+                                <td>
+                                    {{
+                                        getPrice(
+                                            ore,
+                                            quantity
+                                        )?.toLocaleString()
+                                    }}
+                                    ISK
+                                </td>
                             </tr>
                         </table>
                     </div>
 
-                    <div class="text-right">{{ totalCost }} ISK</div>
+                    <div class="text-right">
+                        {{ totalCost?.toLocaleString() }} ISK
+                    </div>
                 </div>
                 <div v-else class="eve-box success p-2">
                     <p>
@@ -308,9 +336,9 @@ watch(currentStockInput, (value) => {
 
             <!-- COSMECTIC -->
             <div
-                class="absolute -z-10 transition-all ease-linear flex items-center justify-center flex-row lg:flex-col"
+                class="absolute -z-10 transition-all mt-4 ease-linear flex items-center justify-center flex-row lg:flex-col"
                 :class="{
-                    'h-1/2 lg:w-1/2': !listShopping,
+                    'h-1/2 lg:w-1/2 lg:ml-5': !listShopping,
                     'h-full lg:w-full': listShopping,
                 }"
             >
