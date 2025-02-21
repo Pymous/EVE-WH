@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title inertia>{{ config('app.name', 'EVE-WH') }}</title>
+    <link rel="icon" href="{{ Vite::asset('resources/img/logo.png') }}" type="image/png">
 
     <script src="https://kit.fontawesome.com/5065bebf8d.js" crossorigin="anonymous"></script>
 
