@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+    font-family: "Ropa Sans", sans-serif;
+}
+
+[type="text"],
+input:where(:not([type])),
+[type="email"],
+[type="url"],
+[type="password"],
+[type="number"],
+[type="date"],
+[type="datetime-local"],
+[type="month"],
+[type="search"],
+[type="tel"],
+[type="time"],
+[type="week"],
+[multiple],
+textarea,
+select {
+    @apply py-2 px-5 border-slate-800 bg-transparent text-white backdrop-blur-lg focus:border-slate-700 focus:outline-slate-700 focus:outline-1 focus:ring-0;
+}
+
+.eve-box {
+    @apply bg-slate-300 border border-slate-800 bg-opacity-5 backdrop-blur-lg;
+}
+
+.eve-box.error {
+    @apply bg-red-300 border-red-800 bg-opacity-5;
+}
+
+.eve-box.success {
+    @apply bg-green-300 border-green-800 bg-opacity-5;
+}
+
+.eve-box.info,
+.eve-box.infos {
+    @apply bg-blue-300 border-blue-800 bg-opacity-5;
+}
+
+button {
+    @apply p-2;
+}
+
+label {
+    @apply flex flex-col;
+}
+
+label span {
+    @apply text-xs uppercase pb-1;
+}
+
+h1 {
+    @apply text-2xl font-bold;
+}
