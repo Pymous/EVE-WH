@@ -336,7 +336,7 @@ watch(currentStockInput, (value) => {
                         <table>
                             <tr v-for="(quantity, ore) in listShopping">
                                 <td>{{ ore }}</td>
-                                <td>{{ quantity }}</td>
+                                <td class="text-right">{{ quantity }}</td>
                             </tr>
                         </table>
                         <table class="text-right">
