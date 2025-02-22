@@ -163,6 +163,16 @@ watch(currentStockInput, (value) => {
     }
     currentStockList.value = stock;
 });
+
+// A function that copy the listShopping to the clipboard
+const copyListShopping = () => {
+    let text = "";
+    for (const [ore, quantity] of Object.entries(listShopping.value)) {
+        text += `${ore}\t${quantity}\n`;
+    }
+    navigator.clipboard.writeText(text);
+    toast.success("Shopping List copied to your clipboard !");
+};
 </script>
 
 <template>
@@ -331,7 +341,14 @@ watch(currentStockInput, (value) => {
                     class="flex flex-col eve-box p-5"
                     v-if="listShopping && Object.keys(listShopping).length"
                 >
-                    <h2 class="text-sm uppercase font-bold">List of Ores</h2>
+                    <h2
+                        class="text-sm uppercase font-bold flex items-center w-full justify-between"
+                    >
+                        <span>List of Ores</span>
+                        <button @click.prevent="copyListShopping()">
+                            <i class="fa fa-fw fa-copy"></i>
+                        </button>
+                    </h2>
                     <div class="flex gap-5">
                         <table>
                             <tr v-for="(quantity, ore) in listShopping">
