@@ -7,7 +7,7 @@ import { toast } from "vue3-toastify";
 defineProps({});
 const loading = ref(false);
 const working = ref(false);
-const search = ref("");
+const search = ref("Caracal");
 const item = ref(null);
 const currentStockInput = ref("");
 const currentStockList = ref({});
@@ -86,6 +86,7 @@ const solve = async () => {
             listShopping.value[ore] = Math.ceil(quantity / 100) * 100;
         }
     }
+
     working.value = false;
 };
 
@@ -144,12 +145,50 @@ const totalCost = computed(() => {
     }
     return total;
 });
+
 const getPrice = (ore, quantity) => {
     if (listPrices.value[ore]) {
         return Math.ceil(listPrices.value[ore].cost * quantity);
     }
     return 0;
 };
+
+// A computed listShoppingMaterialsString that return a string with the materials needed for the shopping list based on listPrices, multiplied by the quantity
+const listShoppingMaterialsString = computed(() => {
+    // Loop over listPrices
+    let ores = {};
+
+    let calculatedEfficiency = 100 - efficiency.value;
+    // Round to 2 decimal places
+    calculatedEfficiency = Math.round(calculatedEfficiency * 100) / 100;
+    // Convert to a percentage
+    calculatedEfficiency = (100 + calculatedEfficiency) / 100;
+
+    for (const [ore, quantity] of Object.entries(listShopping.value)) {
+        // Check if "ore" exist in the props.ores object, if yes, add it to listOres
+        if (listPrices.value[ore]) {
+            let tempText = "<table>";
+            // Loop over listPrices.value[ore], and add the name and quantity to the tempText, ignore [cost, m3]
+            for (const [name, value] of Object.entries(listPrices.value[ore])) {
+                if (name !== "cost" && name !== "m3") {
+                    // Add the name and quantity to the tempText, and don't forget to multiply by the quantity from listShopping and round it up
+                    tempText += `<tr>
+                        <td>${name}</td>
+                        <td class="text-right pl-3">
+                            ${Math.ceil(
+                                value * quantity * calculatedEfficiency
+                            ).toLocaleString()}
+                        </td>
+                    </tr>`;
+                }
+            }
+
+            tempText += "</table>";
+            ores[ore] = tempText;
+        }
+    }
+    return ores;
+});
 
 // Watch the currentStockInput, and split the input by line, then by tab (the last occurence is the quantity, the first is the item), and add it to the currentStockList , the key being the item name, and the value the quantity
 watch(currentStockInput, (value) => {
@@ -345,13 +384,20 @@ const copyListShopping = () => {
                         class="text-sm uppercase font-bold flex items-center w-full justify-between"
                     >
                         <span>List of Ores</span>
+
                         <button @click.prevent="copyListShopping()">
                             <i class="fa fa-fw fa-copy"></i>
                         </button>
                     </h2>
                     <div class="flex gap-5">
                         <table>
-                            <tr v-for="(quantity, ore) in listShopping">
+                            <tr
+                                v-for="(quantity, ore) in listShopping"
+                                v-tippy
+                                :data-tippy-content="
+                                    listShoppingMaterialsString[ore]
+                                "
+                            >
                                 <td>{{ ore }}</td>
                                 <td class="text-right">{{ quantity }}</td>
                             </tr>
