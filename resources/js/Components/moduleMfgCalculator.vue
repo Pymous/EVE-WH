@@ -1,10 +1,15 @@
 <script setup>
 import solver from "javascript-lp-solver";
 import { Head, Link } from "@inertiajs/vue3";
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
 import { toast } from "vue3-toastify";
 
-defineProps({});
+const props = defineProps({
+    oresList: {
+        type: Object,
+        required: true,
+    },
+});
 const loading = ref(false);
 const working = ref(false);
 const search = ref("Caracal");
@@ -59,11 +64,23 @@ const solve = async () => {
     let response = await axios.get("/api/solver/ores");
 
     listPrices.value = response.data;
+
+    // Make a new $listPricesWithoutExcluded that is a copy of $listPrices, and remove the ores that are in $oresToExclude
+    let listPricesWithoutExcluded = { ...listPrices.value };
+    // Loop over listPricesWithoutExcluded, and check if the value.id is in oresToExclude, if yes, remove it from the list
+    for (const [key, value] of Object.entries(listPricesWithoutExcluded)) {
+        if (oresToExclude.value.includes(value.id)) {
+            delete listPricesWithoutExcluded[key];
+        }
+    }
+
+    console.log(listPricesWithoutExcluded);
+
     let model = {
         optimize: "cost",
         opType: "min",
         constraints: manufactureMaterials.value.efficiency,
-        variables: listPrices.value,
+        variables: listPricesWithoutExcluded,
         ints: {
             Tritanium: 1,
             Pyerite: 1,
@@ -212,6 +229,31 @@ const copyListShopping = () => {
     navigator.clipboard.writeText(text);
     toast.success("Shopping List copied to your clipboard !");
 };
+
+const oresToExclude = ref([]);
+const searchOres = ref(null);
+const filteredOresToExclude = ref(props.oresList);
+const showOresToExclude = ref(false);
+
+// Automatically watch searchOres (input) and filter the ores based on the search
+watch(searchOres, (value) => {
+    filteredOresToExclude.value = props.oresList.filter((ore) =>
+        ore.name.toLowerCase().includes(value.toLowerCase())
+    );
+});
+
+// Watch oresToExclude, and when it changes, set a local storage item with the value
+watch(oresToExclude, (value) => {
+    localStorage.setItem("oresToExclude", JSON.stringify(value));
+});
+
+// On mount, check if there is a local storage item for oresToExclude, if yes, set it to the value
+onMounted(() => {
+    let ores = localStorage.getItem("oresToExclude");
+    if (ores) {
+        oresToExclude.value = JSON.parse(ores);
+    }
+});
 </script>
 
 <template>
@@ -236,6 +278,7 @@ const copyListShopping = () => {
             process.
         </p>
     </div>
+
     <div class="flex flex-col items-center justify-center mt-12">
         <div class="flex flex-col lg:flex-row gap-12">
             <div class="inline-flex gap-3 flex-col">
@@ -315,6 +358,65 @@ const copyListShopping = () => {
                             }"
                         ></div>
                     </div>
+                </label>
+            </div>
+        </div>
+
+        <div class="flex flex-col w-full mt-5">
+            <div class="flex items-center justify-between">
+                <div @click="showOresToExclude = !showOresToExclude">
+                    <i
+                        class="fa fa-fw"
+                        :class="{
+                            'fa-caret-down': showOresToExclude,
+                            'fa-caret-right': !showOresToExclude,
+                        }"
+                    ></i>
+                    <span class="pr-3"> Ores To Ignore </span>
+                </div>
+
+                <div class="flex items-center">
+                    <span v-if="oresToExclude.length">
+                        {{ oresToExclude.length }} / {{ oresList.length }}
+                    </span>
+                    <button
+                        @click="
+                            oresToExclude = [];
+                            showOresToExclude = false;
+                            searchOres = '';
+                        "
+                        class="py-0"
+                        v-if="oresToExclude.length"
+                    >
+                        <i class="fa fa-fw fa-times"></i>
+                    </button>
+
+                    <input
+                        v-model="searchOres"
+                        type="text"
+                        placeholder="Search for specific ores to ignore"
+                        ref="inputOres"
+                        @input="showOresToExclude = true"
+                    />
+                </div>
+            </div>
+            <div
+                class="grid grid-cols-2 lg:grid-cols-5 gap-3 mt-5"
+                v-if="showOresToExclude"
+            >
+                <label
+                    :for="`ore-${ore.id}`"
+                    v-for="ore in filteredOresToExclude"
+                    :key="ore.id"
+                    class="flex gap-2 items-center flex-row"
+                >
+                    <input
+                        type="checkbox"
+                        :id="`ore-${ore.id}`"
+                        v-model="oresToExclude"
+                        :value="ore.id"
+                    />
+                    <span class="p-0">{{ ore.name }}</span>
                 </label>
             </div>
         </div>

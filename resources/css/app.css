@@ -43,7 +43,7 @@ select {
 }
 
 button {
-    @apply p-2;
+    @apply p-2 inline-flex items-center justify-center;
 }
 
 label {

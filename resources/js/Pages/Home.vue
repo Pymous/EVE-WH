@@ -2,7 +2,12 @@
 import { Head, Link } from "@inertiajs/vue3";
 import moduleMfgCalculator from "../Components/moduleMfgCalculator.vue";
 
-defineProps({});
+defineProps({
+    oresList: {
+        type: Array,
+        required: true,
+    },
+});
 </script>
 
 <template>
@@ -22,6 +27,6 @@ defineProps({});
             </div>
         </div>
 
-        <module-mfg-calculator />
+        <module-mfg-calculator :oresList="oresList" />
     </div>
 </template>
