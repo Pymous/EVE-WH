@@ -187,7 +187,7 @@ const listShoppingMaterialsString = computed(() => {
             let tempText = "<table>";
             // Loop over listPrices.value[ore], and add the name and quantity to the tempText, ignore [cost, m3]
             for (const [name, value] of Object.entries(listPrices.value[ore])) {
-                if (name !== "cost" && name !== "m3") {
+                if (name !== "cost" && name !== "m3" && name !== "id") {
                     // Add the name and quantity to the tempText, and don't forget to multiply by the quantity from listShopping and round it up
                     tempText += `<tr>
                         <td>${name}</td>
