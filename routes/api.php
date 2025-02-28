@@ -19,5 +19,6 @@ use App\Http\Controllers\Api\PatientController;
 
 Route::get('/item/search', [ApiController::class, 'searchItem']);
 Route::get('/items/search', [ApiController::class, 'searchItems']);
+Route::get('/items/ores', [ApiController::class, 'getOresList']);
 
 Route::get('/solver/ores', [ApiController::class, 'solverOres']);
