@@ -36,7 +36,7 @@
     @endif
 </head>
 
-<body class="font-sans antialiased bg-gray-950 text-slate-300">
+<body class="font-sans antialiased bg-gray-950 text-slate-300 max-lg:px-5">
     @if (config('app.gtag', ''))
         <!-- Google Tag Manager (noscript) -->
         <noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ config('app.gtag', '') }}" height="0"
