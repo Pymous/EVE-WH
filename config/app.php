@@ -54,6 +54,8 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
 
+    'gtag' => env('APP_GTAG', ''),
+
     /*
     |--------------------------------------------------------------------------
     | Application Timezone
