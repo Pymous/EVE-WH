@@ -20,7 +20,7 @@ class ApiController
         if (@$data['type'] === 'id') {
             $item = Item::where('id', $data['search'])->firstOrFail();
         } else {
-            $item = Item::where('name', $data['search'])->firstOrFail();
+            $item = Item::whereRaw('LOWER(name) = ?', [strtolower($data['search'])])->firstOrFail();
         }
 
         $bp = $item->bp()->load('manufactureMaterials');
@@ -34,7 +34,7 @@ class ApiController
     public function searchItems(Request $request)
     {
         $search = $request->input('search');
-        $items = Item::where('name', 'like', '%' . $search . '%')->get();
+        $items = Item::whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($search) . '%'])->get();
 
         return response()->json([
             'items' => $items,
