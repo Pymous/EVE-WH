@@ -29,6 +29,6 @@ class apiFull extends Command
         $this->call('sde:import:type_materials');
         $this->call('sde:import:activity_products');
         $this->call('sde:import:activity_materials');
-        $this->call('api:fuzz:prices');
+        $this->call('api:esi:prices');
     }
 }
