@@ -40,6 +40,8 @@ const fetchItem = async () => {
         })
         .then((response) => {
             item.value = response.data;
+            // Save current search term to localStorage on successful search
+            localStorage.setItem("lastSearchTerm", search.value);
         })
         .catch((error) => {
             switch (error.response.status) {
@@ -252,6 +254,12 @@ onMounted(() => {
     let ores = localStorage.getItem("oresToExclude");
     if (ores) {
         oresToExclude.value = JSON.parse(ores);
+    }
+
+    // Load last search term from localStorage if it exists
+    const savedSearch = localStorage.getItem("lastSearchTerm");
+    if (savedSearch) {
+        search.value = savedSearch;
     }
 });
 </script>

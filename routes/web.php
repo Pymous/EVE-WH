@@ -48,3 +48,5 @@ Route::get('/mfg', function () {
     dd($item->bp());
     dd($item->manufactureMaterials);
 });
+
+// EVE Online SSO Authentication Routes have been removed
