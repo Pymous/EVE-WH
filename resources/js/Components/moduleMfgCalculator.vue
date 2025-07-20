@@ -31,6 +31,14 @@ const inputEfficiency = ref(null);
 
 // Using axios, fetch the item from the database based on the search, call /search with a query parameter of search
 const fetchItem = async () => {
+    // If search.value contain the word "Blueprint", remove it from the search
+    if (search.value.toLowerCase().includes("blueprint")) {
+        search.value = search.value
+            .toLowerCase()
+            .replace("blueprint", "")
+            .trim();
+    }
+
     loading.value = true;
     await axios
         .get("/api/item/search", {
