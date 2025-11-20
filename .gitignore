@@ -24,5 +24,4 @@ yarn-error.log
 database/database.sqlite
 
 # EVE SDE YAML files (too large for GitHub)
-/storage/sde/yaml/*.yaml
-/storage/sde/*.csv
+/storage/sde/*
