@@ -50,8 +50,8 @@ class ApiController
 
         $ores = [];
         foreach ($items as $item) {
-            // If $item->prices->jita['sell']['percentile'] is null/0, skip it as it's not available
-            if (!$item->prices->jita['sell']['percentile']) {
+            // If prices don't exist or jita sell percentile is null/0, skip it as it's not available
+            if (!$item->prices || !isset($item->prices->jita['sell']['percentile']) || !$item->prices->jita['sell']['percentile']) {
                 continue;
             }
             $ores[$item->name] = [

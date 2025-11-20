@@ -25,10 +25,7 @@ class apiFull extends Command
      */
     public function handle()
     {
-        $this->call('sde:import:items');
-        $this->call('sde:import:type_materials');
-        $this->call('sde:import:activity_products');
-        $this->call('sde:import:activity_materials');
+        $this->call('sde:import');
         $this->call('api:esi:prices');
     }
 }
