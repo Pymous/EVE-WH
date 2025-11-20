@@ -99,7 +99,6 @@ class apiEsiPrices extends Command
             3489,
             3490,
             1855,
-            772,
             792,
             614,
             2814,

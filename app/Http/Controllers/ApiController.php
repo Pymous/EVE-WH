@@ -43,7 +43,7 @@ class ApiController
 
     public function solverOres()
     {
-        $marketGroups = [3638, 3639, 3640, 518, 519, 515, 516, 526, 523, 529, 528, 527, 525, 522, 521, 514, 512, 517, 2538, 2539, 2540, 530, 3487, 3488, 3489, 3490, 1855, 772, 792, 614, 2814, 2396, 2397, 2398, 2400, 2401, 20, 3636, 3637];
+        $marketGroups = [3638, 3639, 3640, 518, 519, 515, 516, 526, 523, 529, 528, 527, 525, 522, 521, 514, 512, 517, 2538, 2539, 2540, 530, 3487, 3488, 3489, 3490, 1855, 792, 614, 2814, 2396, 2397, 2398, 2400, 2401, 20, 3636, 3637];
 
         // Get all the items that are in the market groups and the name start with Compressed%
         $items = Item::whereIn('market_group_id', $marketGroups)->where('name', 'like', 'Compressed%')->with(['prices', 'refinedMaterials'])->get();
@@ -70,7 +70,7 @@ class ApiController
 
     public function getOresList()
     {
-        $marketGroups = [3638, 3639, 3640, 518, 519, 515, 516, 526, 523, 529, 528, 527, 525, 522, 521, 514, 512, 517, 2538, 2539, 2540, 530, 3487, 3488, 3489, 3490, 1855, 772, 792, 614, 2814, 2396, 2397, 2398, 2400, 2401, 20, 3636, 3637];
+        $marketGroups = [3638, 3639, 3640, 518, 519, 515, 516, 526, 523, 529, 528, 527, 525, 522, 521, 514, 512, 517, 2538, 2539, 2540, 530, 3487, 3488, 3489, 3490, 1855, 792, 614, 2814, 2396, 2397, 2398, 2400, 2401, 20, 3636, 3637];
 
         // Get all the items that are in the market groups and the name start with Compressed%
         $items = Item::whereIn('market_group_id', $marketGroups)->where('name', 'like', 'Compressed%')->with(['prices', 'refinedMaterials'])->get();
