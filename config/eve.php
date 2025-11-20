@@ -24,11 +24,11 @@ return [
 
     // Common EVE region IDs
     'regions' => [
-        'the_forge' => 10000002, // Jita
-        'domain' => 10000043,    // Amarr
-        'sinq_laison' => 10000032, // Dodixie
-        'heimatar' => 10000030,  // Rens
-        'metropolis' => 10000042 // Hek
+        'jita' => 10000002,     // The Forge (Jita)
+        'amarr' => 10000043,    // Domain (Amarr)
+        'dodixie' => 10000032,  // Sinq Laison (Dodixie)
+        'rens' => 10000030,     // Heimatar (Rens)
+        'hek' => 10000042,      // Metropolis (Hek)
     ],
 
     // Map our application station names to EVE station IDs
