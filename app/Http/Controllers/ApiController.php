@@ -58,6 +58,7 @@ class ApiController
                 'id' => $item->id,
                 'cost' => $item->prices->jita['sell']['percentile'],
                 'm3' => $item->volume,
+                'portion_size' => $item->portion_size,
             ];
 
             foreach ($item->refinedMaterials as $material) {
