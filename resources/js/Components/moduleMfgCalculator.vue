@@ -105,6 +105,8 @@ const solve = async () => {
 
     let results = solver.Solve(model);
 
+    console.log("Solver Results : ", results);
+
     listShopping.value = {};
     for (const [ore, quantity] of Object.entries(results)) {
         // Check if "ore" exist in the props.ores object, if yes, add it to listOres
@@ -220,29 +222,51 @@ const getPrice = (ore, quantity) => {
 
 // A computed listShoppingMaterialsString that return a string with the materials needed for the shopping list based on listPrices, multiplied by the quantity
 const listShoppingMaterialsString = computed(() => {
+    console.log("=== listShoppingMaterialsString Debug ===");
+    console.log("listShopping.value:", listShopping.value);
+    console.log("efficiency.value:", efficiency.value);
+
     // Loop over listPrices
     let ores = {};
 
     let calculatedEfficiency = 100 - efficiency.value;
+    console.log(
+        "calculatedEfficiency (after 100 - efficiency):",
+        calculatedEfficiency
+    );
     // Round to 2 decimal places
     calculatedEfficiency = Math.round(calculatedEfficiency * 100) / 100;
+    console.log("calculatedEfficiency (after rounding):", calculatedEfficiency);
     // Convert to a percentage
     calculatedEfficiency = (100 + calculatedEfficiency) / 100;
+    console.log(
+        "calculatedEfficiency (final percentage):",
+        calculatedEfficiency
+    );
 
     for (const [ore, quantity] of Object.entries(listShopping.value)) {
+        console.log(`\n--- Processing Ore: ${ore} ---`);
+        console.log("Quantity:", quantity);
+
         // Check if "ore" exist in the props.ores object, if yes, add it to listOres
         if (listPrices.value[ore]) {
+            console.log("Found ore in listPrices:", listPrices.value[ore]);
             let tempText = "<table>";
             // Loop over listPrices.value[ore], and add the name and quantity to the tempText, ignore [cost, m3]
             for (const [name, value] of Object.entries(listPrices.value[ore])) {
                 if (name !== "cost" && name !== "m3" && name !== "id") {
+                    const materialQuantity = Math.ceil(
+                        value * quantity * calculatedEfficiency
+                    );
+                    console.log(value, quantity, calculatedEfficiency);
+                    console.log(
+                        `  Material: ${name}, Value: ${value}, Calculated: ${materialQuantity}`
+                    );
                     // Add the name and quantity to the tempText, and don't forget to multiply by the quantity from listShopping and round it up
                     tempText += `<tr>
                         <td>${name}</td>
                         <td class="text-right pl-3">
-                            ${Math.ceil(
-                                value * quantity * calculatedEfficiency
-                            ).toLocaleString()}
+                            ${materialQuantity.toLocaleString()}
                         </td>
                     </tr>`;
                 }
@@ -250,8 +274,15 @@ const listShoppingMaterialsString = computed(() => {
 
             tempText += "</table>";
             ores[ore] = tempText;
+        } else {
+            console.log("Ore not found in listPrices");
         }
     }
+
+    console.log("\n=== Final ores object ===");
+    console.log(ores);
+    console.log("=== End listShoppingMaterialsString Debug ===\n");
+
     return ores;
 });
 
