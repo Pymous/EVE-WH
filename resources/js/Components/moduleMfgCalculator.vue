@@ -84,8 +84,6 @@ const solve = async () => {
         }
     }
 
-    console.log(listPricesWithoutExcluded);
-
     let model = {
         optimize: "cost",
         opType: "min",
@@ -102,6 +100,8 @@ const solve = async () => {
             cost: 1,
         },
     };
+
+    console.log("LP Model : ", model);
 
     let results = solver.Solve(model);
 
@@ -137,27 +137,65 @@ const manufactureMaterials = computed(() => {
             base: {},
             efficiency: {},
         };
+        console.log("=== manufactureMaterials Loop Debug ===");
+        console.log(
+            "Total materials to process:",
+            item.value.bp.manufacture_materials.length
+        );
+        console.log("Runs:", runs.value);
+        console.log("Material Efficiency:", calculatedMaterialEfficiency);
+        console.log("Reprocessing Efficiency:", calculatedEfficiency);
+        console.log("Current Stock List:", currentStockList.value);
+
         for (const material of item.value.bp.manufacture_materials) {
+            console.log("\n--- Processing Material ---");
+            console.log("Material Name:", material.name);
+            console.log("Base Quantity (per run):", material.pivot.quantity);
+
             let tempQuantity = material.pivot.quantity * runs.value; // Apply the number of runs we want to make
+            console.log("Temp Quantity (after runs):", tempQuantity);
 
             // Check if the current material.name is in currentStockList, and if yes, subtract the quantity available to the quantity needed
             if (currentStockList.value[material.name]) {
+                console.log(
+                    "Stock available:",
+                    currentStockList.value[material.name]
+                );
                 tempQuantity -= currentStockList.value[material.name];
+                console.log(
+                    "Temp Quantity (after stock subtraction):",
+                    tempQuantity
+                );
                 // Make sure the quantity is positive, or 0, in case we have too much stuff, you know
                 tempQuantity = Math.max(0, tempQuantity);
+                console.log("Temp Quantity (after max 0):", tempQuantity);
+            } else {
+                console.log("No stock available for this material");
             }
 
+            const baseMin = material.pivot.quantity * runs.value;
+            const efficiencyMin =
+                tempQuantity *
+                calculatedMaterialEfficiency *
+                calculatedEfficiency;
+
+            console.log("Base Min:", baseMin);
+            console.log("Efficiency Min:", efficiencyMin);
+
             materials["base"][material.name] = {
-                min: material.pivot.quantity * runs.value,
+                min: baseMin,
             };
 
             materials["efficiency"][material.name] = {
-                min:
-                    tempQuantity *
-                    calculatedMaterialEfficiency * // Apply ME
-                    calculatedEfficiency, // Apply Reprocessing Efficiency
+                min: efficiencyMin,
             };
         }
+
+        console.log("\n=== Final Materials Object ===");
+        console.log("Base:", materials.base);
+        console.log("Efficiency:", materials.efficiency);
+        console.log("=== End Debug ===\n");
+
         return materials;
     }
 
