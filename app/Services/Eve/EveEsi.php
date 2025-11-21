@@ -140,9 +140,13 @@ class EveEsi
                 $queryParams['type_id'] = $typeId;
             }
 
-            $response = $this->getHttpClient()->get("markets/{$regionId}/orders/", [
-                'query' => $queryParams
-            ]);
+            $queryParams = implode('&', array_map(
+                fn($key, $value) => "{$key}={$value}",
+                array_keys($queryParams),
+                $queryParams
+            ));
+
+            $response = $this->getHttpClient()->get("markets/{$regionId}/orders?{$queryParams}");
 
             if ($response->successful()) {
                 $data = $response->json();
